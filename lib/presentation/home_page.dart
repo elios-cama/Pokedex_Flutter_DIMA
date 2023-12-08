@@ -29,12 +29,13 @@ class _HomePageState extends State<HomePage> {
             width: MediaQuery.of(context).size.width,
           ),
           const Expanded(
-              child: Text(
-            "Pokemon",
-            style: TextStyle(
-              color: Colors.white,
+            child: Text(
+              "Pokemon",
+              style: TextStyle(
+                color: Colors.white,
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
