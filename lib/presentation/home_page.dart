@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/presentation/widget/pokemon_grid.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,12 +30,7 @@ class _HomePageState extends State<HomePage> {
             width: MediaQuery.of(context).size.width,
           ),
           const Expanded(
-            child: Text(
-              "Pokemon",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
+            child: PokemonGrid(),
           ),
         ],
       ),
