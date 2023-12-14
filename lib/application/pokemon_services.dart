@@ -11,7 +11,8 @@ class PokemonState {
 }
 
 class PokemonNotifier extends StateNotifier<PokemonState> {
-  PokemonNotifier({required this.repository}) : super(PokemonState(pokemons: [])) {
+  PokemonNotifier({required this.repository})
+      : super(PokemonState(pokemons: [])) {
     _fetchPokemons();
   }
 
@@ -25,9 +26,19 @@ class PokemonNotifier extends StateNotifier<PokemonState> {
       state = PokemonState(pokemons: [], error: e);
     }
   }
+
+  Pokemon? getPokemon(String id) {
+    try {
+      final pokemon = state.pokemons.firstWhere((pokemon) => pokemon.id == id);
+      return pokemon;
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
-final pokemonNotifierProvider = StateNotifierProvider<PokemonNotifier, PokemonState>((ref) {
+final pokemonNotifierProvider =
+    StateNotifierProvider<PokemonNotifier, PokemonState>((ref) {
   final repository = ref.watch(pokemonRepositoryProvider);
   return PokemonNotifier(repository: repository);
 });

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex/presentation/widget/pokemon_tile.dart';
 
 import '../../application/pokemon_services.dart';
-import '../../data/pokemon_repository.dart';
 
 class PokemonGrid extends ConsumerWidget {
   const PokemonGrid({super.key});
@@ -15,7 +14,8 @@ class PokemonGrid extends ConsumerWidget {
 
     if (pokemonState.error != null) {
       return const Center(
-        child: Text('An error occurred. Please check your internet connection and try again.'),
+        child: Text(
+            'An error occurred. Please check your internet connection and try again.'),
       );
     }
 

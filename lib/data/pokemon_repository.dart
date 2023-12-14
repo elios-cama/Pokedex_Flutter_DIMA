@@ -25,6 +25,7 @@ class PokemonRepository {
         .toList();
     return pokemons;
   }
+
   Future<T> _run<T>({
     required Future<Response> Function() request,
     required T Function(dynamic) parse,
@@ -48,10 +49,9 @@ class PokemonRepository {
 }
 
 @Riverpod(keepAlive: true)
-PokemonRepository pokemonRepository(PokemonRepositoryRef ref){
+PokemonRepository pokemonRepository(PokemonRepositoryRef ref) {
   return PokemonRepository(dio: ref.watch(dioProvider));
 }
-
 
 @riverpod
 Future<List<Pokemon>> fetchPokemons(FetchPokemonsRef ref) {
@@ -59,8 +59,5 @@ Future<List<Pokemon>> fetchPokemons(FetchPokemonsRef ref) {
 
   ref.onDispose(() => cancelToken.cancel());
 
-  return ref
-      .watch(pokemonRepositoryProvider)
-      .fetchPokemons(cancelToken);
+  return ref.watch(pokemonRepositoryProvider).fetchPokemons(cancelToken);
 }
-
