@@ -3,18 +3,100 @@ import 'package:flutter/material.dart';
 class Type {
   final String name;
   final Color color;
+  final Color backgroundColor;
 
-  Type({required this.name, required this.color});
+  Type({required this.name, required this.color, required this.backgroundColor});
 
   factory Type.fromJson(String typeName) {
     Color typeColor = _getColorForType(typeName);
-    return Type(name: typeName, color: typeColor);
+    Color backgroundTypeColor = _getBackgroundColorForType(typeName);
+    return Type(name: typeName, color: typeColor, backgroundColor: backgroundTypeColor);
   }
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'color': color.value,
+      'backgroundColor': backgroundColor.value,
     };
+  }
+
+  static Widget generateTypeBoxes(List<Type> types) {
+    if (types.length == 1) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildTypesBox(types[0]),
+          // const SizedBox(width: 80.0),
+        ],
+      );
+    } else if (types.length == 2) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildTypesBox(types[0]),
+          const SizedBox(width: 20.0),
+          buildTypesBox(types[1]),
+        ],
+      );
+    } else if (types.length < 5) {
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: types.fold([], (list, type) {
+            list.add(buildTypesBox(type));
+            if (type != types.last) {
+              list.add(const SizedBox(
+                width: 35.0,
+              ));
+            }
+            return list;
+          }));
+    } else {
+      var firstThreeElements = types.sublist(0, 3);
+      var lastElements = types.sublist(3);
+
+      return Column(children: [
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: firstThreeElements.fold([], (list, type) {
+              list.add(buildTypesBox(type));
+              if (type != firstThreeElements.last) {list.add(const SizedBox(width: 35.0,));}
+              return list;
+              },
+            )),
+
+        SizedBox(height: 12,),
+
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: lastElements.fold([], (list, type) {
+                list.add(buildTypesBox(type));
+                if (type != lastElements.last) {list.add(const SizedBox(width: 35.0,));}
+                return list;
+              },
+            )),
+      ]);
+    }
+  }
+
+  static Container buildTypesBox(Type type) {
+    return Container(
+      width: 60, // Adjust width as needed
+      height: 25, // Adjust height as needed
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        color: type.color,
+      ),
+      child: Center(
+        child: Text(
+          type.name,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 14.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 
   static Color _getColorForType(String typeName) {
@@ -37,6 +119,31 @@ class Type {
       "Dragon": const Color(0xFF6A7A89), // Slate Blue
       "Dark": const Color(0xFF5A4A42), // Chocolate
       "Fairy": const Color(0xFFF2B6CF), // Pastel Pink
+    };
+
+    return typeColorMap[typeName] ?? Colors.grey;
+  }
+
+  static Color _getBackgroundColorForType(String typeName) {
+    Map<String, Color> typeColorMap = {
+      "Normal": const Color(0xFFEEEEEE), // Light Grey
+      "Fire": const Color(0xFFFFC8A4), // Salmon
+      "Water": const Color(0xFFC8EEFF), // Sky Blue
+      "Grass": const Color(0xFFD3FBE8), // Pastel Green
+      "Flying": const Color(0xFF000000), // Silver
+      "Fighting": const Color(0xFFE6A3A3), // Pastel Red
+      "Poison": const Color(0xFFD2BFE5), // Lavender
+      "Electric": const Color(0xFFFFFB9A), // Pastel Yellow
+      "Ground": const Color(0xACFFDCAF), // Camel
+      "Rock": const Color(0xACF9E5DE), // Pastel Brown
+      "Psychic": const Color(0xFFE2BFED), // Pastel Pink
+      "Ice": const Color(0xFFE8F8FE), // Baby Blue
+      "Bug": const Color(0xFFDAFFC2), // Pastel Olive
+      "Ghost": const Color(0xFFAFB7D2), // Periwinkle
+      "Steel": const Color(0xFFBEC6C6), // Dark Gray
+      "Dragon": const Color(0xFFA2A9D0), // Slate Blue
+      "Dark": const Color(0xFFA4A495), // Chocolate GG
+      "Fairy": const Color(0xFFFCDEEC), // Pastel Pink
     };
 
     return typeColorMap[typeName] ?? Colors.grey;
