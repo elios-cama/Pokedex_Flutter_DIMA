@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex/domain/pokemon.dart';
 import 'package:pokedex/domain/type.dart';
-import 'package:pokedex/presentation/widget/pokemon_infoPage.dart';
+import 'package:pokedex/presentation/pages/pokemon_info_page.dart';
 import 'package:pokedex/presentation/widget/type_box.dart';
 
 import '../../application/pokemon_services.dart';
