@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex/domain/pokemon.dart';
-import 'package:pokedex/presentation/home_page.dart';
 import 'package:pokedex/presentation/widget/type_box.dart';
 
 import '../../application/pokemon_services.dart';
+import '../home_page.dart';
 
 class PokemonInfoPage extends ConsumerWidget {
   const PokemonInfoPage({super.key, required this.pokemon});
@@ -16,237 +16,207 @@ class PokemonInfoPage extends ConsumerWidget {
     final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
 
     return Scaffold(
-        body: GestureDetector(
-          onHorizontalDragUpdate: (DragUpdateDetails details) {
-            try {
-              if (details.delta.dx > 0.1) {
-                var nextPokemon =
-                    pokemonNotifier.getPokemon(_getPrevPokemonID(pokemon.id));
-                if (nextPokemon == null) {
-                  throw '';
-                }
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => PokemonInfoPage(
-                            pokemon: nextPokemon,
-                          )),
-                );
-              } else if (details.delta.dx < -0.1) {
-                var nextPokemon =
-                    pokemonNotifier.getPokemon(_getNextPokemonID(pokemon.id));
-                if (nextPokemon == null) {
-                  throw '';
-                }
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => PokemonInfoPage(
-                            pokemon: nextPokemon,
-                          )),
-                );
+      body: GestureDetector(
+        onHorizontalDragUpdate: (DragUpdateDetails details) {
+          try {
+            if (details.delta.dx > 0.1) {
+              var nextPokemon =
+                  pokemonNotifier.getPokemon(_getPrevPokemonID(pokemon.id));
+              if (nextPokemon == null) {
+                throw '';
               }
-            } catch (e) {}
-          },
-          child: ListView(children: [
-            WillPopScope(
-              // Override back button, but how to do that on iOS???
-              onWillPop: () async {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => PokemonInfoPage(
+                    pokemon: nextPokemon,
                   ),
-                );
-                return false;
-              },
-              child: Column(
+                ),
+              );
+            } else if (details.delta.dx < -0.1) {
+              var nextPokemon =
+                  pokemonNotifier.getPokemon(_getNextPokemonID(pokemon.id));
+              if (nextPokemon == null) {
+                throw '';
+              }
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => PokemonInfoPage(
+                          pokemon: nextPokemon,
+                        )),
+              );
+            }
+          } catch (e) {}
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Stack(
                 children: [
                   Container(
-                      height: MediaQuery.of(context).size.height * 0.32,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: pokemon.typeofpokemon[0].backgroundColor,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(25.0),
-                          bottomRight: Radius.circular(25.0),
-                        ),
-                        image: DecorationImage(
-                          image: NetworkImage(pokemon.imageurl),
-                          fit: BoxFit.fitHeight,
-                        ),
-                      )),
-
-                  const SizedBox(height: 18.0), // padding
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      Text(
-                        pokemon.name.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                    height: 240,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: pokemon.typeofpokemon[0].backgroundColor,
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(25.0),
+                        bottomRight: Radius.circular(25.0),
                       ),
-                      const Spacer(),
-                      typeBoxes(pokemon.typeofpokemon),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                    ],
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      Text(
-                        pokemon.id,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                      image: DecorationImage(
+                        image: NetworkImage(pokemon.imageurl),
+                        fit: BoxFit.fitHeight,
                       ),
-                    ],
+                    ),
                   ),
-
-                  const SizedBox(height: 24.0),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      Expanded(
-                        child: Text(
-                          pokemon.xdescription,
-                          style: TextStyle(
-                            fontSize: 16,
-                            // fontWeight: FontWeight.bold,
-                            color: Colors.grey[500],
-                            height: 1,
-                          ),
-                        ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 40.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomePage(),
+                            ),
+                          );
+                        },
                       ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                    ],
-                  ),
-
-                  const SizedBox(
-                    height: 30.0,
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      const Text(
-                        "Characteristics",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          height: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(
-                    height: 12.0,
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      Text(
-                        "height : ${pokemon.height}",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          height: 1,
-                        ),
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-                      Text(
-                        "weight : ${pokemon.weight}",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          height: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(
-                    height: 24.0,
-                  ),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      const Text(
-                        "Weaknesses",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          height: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12.0,
-                  ),
-                  typeBoxes(pokemon.weaknesses),
-                  const SizedBox(
-                    height: 30.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.058),
-                      const Text(
-                        "Evolutions",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          height: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(
-                    height: 18.0,
-                  ),
-
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:
-                          getEvolutionImages(pokemon, context, pokemonNotifier),
                     ),
                   ),
                 ],
               ),
-            ),
-          ]),
-        ));
+              const SizedBox(height: 18.0), // padding
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          pokemon.name.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        typeBoxes(pokemon.typeofpokemon),
+                      ],
+                    ),
+                    Text(
+                      pokemon.id,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            pokemon.xdescription,
+                            style: TextStyle(
+                              fontSize: 16,
+                              // fontWeight: FontWeight.bold,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                    const Text(
+                      "Characteristics",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 12.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "height : ${pokemon.height}",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20.0,
+                        ),
+                        Text(
+                          "weight : ${pokemon.weight}",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.black,
+                            height: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                    const Text(
+                      "Weaknesses",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 12.0,
+                    ),
+                    typeBox(pokemon.weaknesses[0]),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                    const Text(
+                      "Evolutions",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 18.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: getEvolutionImages(
+                        pokemon,
+                        context,
+                        pokemonNotifier,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 24.0,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   List<Widget> getEvolutionImages(
@@ -258,11 +228,8 @@ class PokemonInfoPage extends ConsumerWidget {
       }
       if (pokemon.id == pokemonID) {
         list.add(
-          Image.network(
-            pokemonEvolution.imageurl,
-            width: 100,
-            height: 100,
-          ),
+          Image.network(pokemonEvolution.imageurl,
+              width: 90, height: 90, fit: BoxFit.contain),
         );
       } else {
         list.add(
@@ -275,17 +242,14 @@ class PokemonInfoPage extends ConsumerWidget {
                         PokemonInfoPage(pokemon: pokemonEvolution),
                     transitionDuration: const Duration(
                         seconds:
-                            0), // Set transition duration to 0 for no animation
+                            1), // Set transition duration to 0 for no animation
                   ),
                 );
               },
               child: Opacity(
                 opacity: (0.5),
-                child: Image.network(
-                  pokemonEvolution.imageurl,
-                  width: 100,
-                  height: 100,
-                ),
+                child: Image.network(pokemonEvolution.imageurl,
+                    width: 90, height: 90, fit: BoxFit.contain),
               )),
         );
       }
@@ -294,19 +258,6 @@ class PokemonInfoPage extends ConsumerWidget {
       }
       return list;
     });
-  }
-
-  Widget pokemonCard(Pokemon pokemon) {
-    return Card(
-      color: pokemon.typeofpokemon[0].backgroundColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Image.network(
-        pokemon.imageurl,
-        fit: BoxFit.cover,
-      ),
-    );
   }
 
   String _getNextPokemonID(String currPokemonID) {
