@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex/domain/pokemon.dart';
-import 'package:pokedex/domain/type.dart';
 import 'package:pokedex/presentation/home_page.dart';
+import 'package:pokedex/presentation/widget/type_box.dart';
 
 import '../../application/pokemon_services.dart';
 
@@ -16,28 +16,12 @@ class PokemonInfoPage extends ConsumerWidget {
     final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
 
     return Scaffold(
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-            },
-            backgroundColor: Colors.white,
-            shape: const CircleBorder(),
-            mini: true,
-            child: const Icon(Icons.arrow_back_ios_new),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         body: GestureDetector(
           onHorizontalDragUpdate: (DragUpdateDetails details) {
             try {
               if (details.delta.dx > 0.1) {
-                var nextPokemon = pokemonNotifier.getPokemon(_getPrevPokemonID(pokemon.id));
+                var nextPokemon =
+                    pokemonNotifier.getPokemon(_getPrevPokemonID(pokemon.id));
                 if (nextPokemon == null) {
                   throw '';
                 }
@@ -48,7 +32,8 @@ class PokemonInfoPage extends ConsumerWidget {
                           )),
                 );
               } else if (details.delta.dx < -0.1) {
-                var nextPokemon = pokemonNotifier.getPokemon(_getNextPokemonID(pokemon.id));
+                var nextPokemon =
+                    pokemonNotifier.getPokemon(_getNextPokemonID(pokemon.id));
                 if (nextPokemon == null) {
                   throw '';
                 }
@@ -95,7 +80,8 @@ class PokemonInfoPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       Text(
                         pokemon.name.toUpperCase(),
                         style: const TextStyle(
@@ -105,15 +91,17 @@ class PokemonInfoPage extends ConsumerWidget {
                         ),
                       ),
                       const Spacer(),
-                      Type.generateTypeBoxes(pokemon.typeofpokemon),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      typeBoxes(pokemon.typeofpokemon),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                     ],
                   ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       Text(
                         pokemon.id,
                         style: const TextStyle(
@@ -130,7 +118,8 @@ class PokemonInfoPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       Expanded(
                         child: Text(
                           pokemon.xdescription,
@@ -142,7 +131,8 @@ class PokemonInfoPage extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                     ],
                   ),
 
@@ -153,7 +143,8 @@ class PokemonInfoPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       const Text(
                         "Characteristics",
                         style: TextStyle(
@@ -173,7 +164,8 @@ class PokemonInfoPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       Text(
                         "height : ${pokemon.height}",
                         style: const TextStyle(
@@ -201,7 +193,8 @@ class PokemonInfoPage extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       const Text(
                         "Weaknesses",
                         style: TextStyle(
@@ -213,21 +206,18 @@ class PokemonInfoPage extends ConsumerWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(
                     height: 12.0,
                   ),
-
-                  Type.generateTypeBoxes(pokemon.weaknesses),
-
+                  typeBoxes(pokemon.weaknesses),
                   const SizedBox(
                     height: 30.0,
                   ),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.058),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.058),
                       const Text(
                         "Evolutions",
                         style: TextStyle(
@@ -248,7 +238,8 @@ class PokemonInfoPage extends ConsumerWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: getEvolutionImages(pokemon, context, pokemonNotifier),
+                      children:
+                          getEvolutionImages(pokemon, context, pokemonNotifier),
                     ),
                   ),
                 ],
@@ -258,7 +249,8 @@ class PokemonInfoPage extends ConsumerWidget {
         ));
   }
 
-  List<Widget> getEvolutionImages(Pokemon pokemon, BuildContext context, PokemonNotifier pokemonNotifier) {
+  List<Widget> getEvolutionImages(
+      Pokemon pokemon, BuildContext context, PokemonNotifier pokemonNotifier) {
     return pokemon.evolutions.fold([], (list, pokemonID) {
       var pokemonEvolution = pokemonNotifier.getPokemon(pokemonID);
       if (pokemonEvolution == null) {
@@ -279,8 +271,11 @@ class PokemonInfoPage extends ConsumerWidget {
                 Navigator.push(
                   context,
                   PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => PokemonInfoPage(pokemon: pokemonEvolution),
-                    transitionDuration: const Duration(seconds: 0), // Set transition duration to 0 for no animation
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        PokemonInfoPage(pokemon: pokemonEvolution),
+                    transitionDuration: const Duration(
+                        seconds:
+                            0), // Set transition duration to 0 for no animation
                   ),
                 );
               },

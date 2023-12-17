@@ -27,10 +27,7 @@ class PokemonGrid extends ConsumerWidget {
       ),
       itemBuilder: (context, index) {
         final pokemon = pokemons[index];
-        return Padding(
-          padding: const EdgeInsets.all(6.0), // Padding around each tile
-          child: PokemonTile(pokemon: pokemon),
-        );
+        return PokemonTile(pokemon: pokemon);
       },
     );
   }

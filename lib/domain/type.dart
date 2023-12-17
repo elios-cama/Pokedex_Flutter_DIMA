@@ -5,13 +5,16 @@ class Type {
   final Color color;
   final Color backgroundColor;
 
-  Type({required this.name, required this.color, required this.backgroundColor});
+  Type(
+      {required this.name, required this.color, required this.backgroundColor});
 
   factory Type.fromJson(String typeName) {
     Color typeColor = _getColorForType(typeName);
     Color backgroundTypeColor = _getBackgroundColorForType(typeName);
-    return Type(name: typeName, color: typeColor, backgroundColor: backgroundTypeColor);
+    return Type(
+        name: typeName, color: typeColor, backgroundColor: backgroundTypeColor);
   }
+
   Map<String, dynamic> toJson() {
     return {
       'name': name,
@@ -20,84 +23,7 @@ class Type {
     };
   }
 
-  static Widget generateTypeBoxes(List<Type> types) {
-    if (types.length == 1) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          buildTypesBox(types[0]),
-          // const SizedBox(width: 80.0),
-        ],
-      );
-    } else if (types.length == 2) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          buildTypesBox(types[0]),
-          const SizedBox(width: 20.0),
-          buildTypesBox(types[1]),
-        ],
-      );
-    } else if (types.length < 5) {
-      return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: types.fold([], (list, type) {
-            list.add(buildTypesBox(type));
-            if (type != types.last) {
-              list.add(const SizedBox(
-                width: 35.0,
-              ));
-            }
-            return list;
-          }));
-    } else {
-      var firstThreeElements = types.sublist(0, 3);
-      var lastElements = types.sublist(3);
 
-      return Column(children: [
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: firstThreeElements.fold([], (list, type) {
-              list.add(buildTypesBox(type));
-              if (type != firstThreeElements.last) {list.add(const SizedBox(width: 35.0,));}
-              return list;
-              },
-            )),
-
-        SizedBox(height: 12,),
-
-        Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: lastElements.fold([], (list, type) {
-                list.add(buildTypesBox(type));
-                if (type != lastElements.last) {list.add(const SizedBox(width: 35.0,));}
-                return list;
-              },
-            )),
-      ]);
-    }
-  }
-
-  static Container buildTypesBox(Type type) {
-    return Container(
-      width: 60, // Adjust width as needed
-      height: 25, // Adjust height as needed
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: type.color,
-      ),
-      child: Center(
-        child: Text(
-          type.name,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 14.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
 
   static Color _getColorForType(String typeName) {
     Map<String, Color> typeColorMap = {
