@@ -19,6 +19,21 @@ Widget typeBoxes(List<Type> types) {
         );
 }
 
+Widget weaknessBoxes(List<Type> types) {
+  return types.length == 1
+      ? typeBox(types[0])
+      : ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: types.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: typeBox(types[index]),
+            );
+          },
+        );
+}
+
 Container typeBox(Type type) {
   return Container(
     width: 60, // Adjust width as needed

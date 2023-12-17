@@ -182,7 +182,10 @@ class PokemonInfoPage extends ConsumerWidget {
                     const SizedBox(
                       height: 12.0,
                     ),
-                    typeBox(pokemon.weaknesses[0]),
+                    SizedBox(
+                      height: 25,
+                      child: weaknessBoxes(pokemon.weaknesses),
+                    ),
                     const SizedBox(
                       height: 24.0,
                     ),
