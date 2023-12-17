@@ -3,19 +3,27 @@ import 'package:flutter/material.dart';
 class Type {
   final String name;
   final Color color;
+  final Color backgroundColor;
 
-  Type({required this.name, required this.color});
+  Type(
+      {required this.name, required this.color, required this.backgroundColor});
 
   factory Type.fromJson(String typeName) {
     Color typeColor = _getColorForType(typeName);
-    return Type(name: typeName, color: typeColor);
+    Color backgroundTypeColor = _getBackgroundColorForType(typeName);
+    return Type(
+        name: typeName, color: typeColor, backgroundColor: backgroundTypeColor);
   }
+
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'color': color.value,
+      'backgroundColor': backgroundColor.value,
     };
   }
+
+
 
   static Color _getColorForType(String typeName) {
     Map<String, Color> typeColorMap = {
@@ -37,6 +45,31 @@ class Type {
       "Dragon": const Color(0xFF6A7A89), // Slate Blue
       "Dark": const Color(0xFF5A4A42), // Chocolate
       "Fairy": const Color(0xFFF2B6CF), // Pastel Pink
+    };
+
+    return typeColorMap[typeName] ?? Colors.grey;
+  }
+
+  static Color _getBackgroundColorForType(String typeName) {
+    Map<String, Color> typeColorMap = {
+      "Normal": const Color(0xFFEEEEEE), // Light Grey
+      "Fire": const Color(0xFFFFC8A4), // Salmon
+      "Water": const Color(0xFFC8EEFF), // Sky Blue
+      "Grass": const Color(0xFFD3FBE8), // Pastel Green
+      "Flying": const Color(0xFF000000), // Silver
+      "Fighting": const Color(0xFFE6A3A3), // Pastel Red
+      "Poison": const Color(0xFFD2BFE5), // Lavender
+      "Electric": const Color(0xFFFFFB9A), // Pastel Yellow
+      "Ground": const Color(0xACFFDCAF), // Camel
+      "Rock": const Color(0xACF9E5DE), // Pastel Brown
+      "Psychic": const Color(0xFFE2BFED), // Pastel Pink
+      "Ice": const Color(0xFFE8F8FE), // Baby Blue
+      "Bug": const Color(0xFFDAFFC2), // Pastel Olive
+      "Ghost": const Color(0xFFAFB7D2), // Periwinkle
+      "Steel": const Color(0xFFBEC6C6), // Dark Gray
+      "Dragon": const Color(0xFFA2A9D0), // Slate Blue
+      "Dark": const Color(0xFFA4A495), // Chocolate GG
+      "Fairy": const Color(0xFFFCDEEC), // Pastel Pink
     };
 
     return typeColorMap[typeName] ?? Colors.grey;
