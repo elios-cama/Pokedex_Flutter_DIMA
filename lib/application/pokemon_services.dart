@@ -27,12 +27,28 @@ class PokemonNotifier extends StateNotifier<PokemonState> {
     }
   }
 
-  Pokemon? getPokemon(String id) {
+  Pokemon? getPokemonById(String id) {
     try {
       final pokemon = state.pokemons.firstWhere((pokemon) => pokemon.id == id);
       return pokemon;
     } catch (e) {
       return null;
+    }
+  }
+  Pokemon? getPokemonByName(String name) {
+    try {
+      final pokemon = state.pokemons.firstWhere((pokemon) => pokemon.name.toLowerCase() == name.toLowerCase());
+      return pokemon;
+    } catch (e) {
+      return null;
+    }
+  }
+  List<String> getPokemonNames() {
+    try {
+      final pokemonNames = state.pokemons.map((pokemon) => pokemon.name).toList();
+      return pokemonNames;
+    } catch (e) {
+      return [];
     }
   }
 }

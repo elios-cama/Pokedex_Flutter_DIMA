@@ -7,41 +7,41 @@ import '../../application/pokemon_services.dart';
 import '../home_page.dart';
 
 class PokemonInfoPage extends ConsumerWidget {
-  const PokemonInfoPage({super.key, required this.pokemon});
+  const PokemonInfoPage({super.key, required this.pokemonName});
 
-  final Pokemon pokemon;
+  final String pokemonName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
-
+    final pokemon = pokemonNotifier.getPokemonByName(pokemonName);
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragUpdate: (DragUpdateDetails details) {
           try {
             if (details.delta.dx > 0.1) {
               var nextPokemon =
-                  pokemonNotifier.getPokemon(_getPrevPokemonID(pokemon.id));
+                  pokemonNotifier.getPokemonById(_getPrevPokemonID(pokemon!.id));
               if (nextPokemon == null) {
                 throw '';
               }
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => PokemonInfoPage(
-                    pokemon: nextPokemon,
+                    pokemonName: pokemonName,
                   ),
                 ),
               );
             } else if (details.delta.dx < -0.1) {
               var nextPokemon =
-                  pokemonNotifier.getPokemon(_getNextPokemonID(pokemon.id));
+                  pokemonNotifier.getPokemonById(_getNextPokemonID(pokemon.id));
               if (nextPokemon == null) {
                 throw '';
               }
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => PokemonInfoPage(
-                          pokemon: nextPokemon,
+                         pokemonName: pokemonName,
                         )),
               );
             }
@@ -56,7 +56,7 @@ class PokemonInfoPage extends ConsumerWidget {
                     height: 240,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: pokemon.typeofpokemon[0].backgroundColor,
+                      color: pokemon!.typeofpokemon[0].backgroundColor,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(25.0),
                         bottomRight: Radius.circular(25.0),
@@ -225,7 +225,7 @@ class PokemonInfoPage extends ConsumerWidget {
   List<Widget> getEvolutionImages(
       Pokemon pokemon, BuildContext context, PokemonNotifier pokemonNotifier) {
     return pokemon.evolutions.fold([], (list, pokemonID) {
-      var pokemonEvolution = pokemonNotifier.getPokemon(pokemonID);
+      var pokemonEvolution = pokemonNotifier.getPokemonById(pokemonID);
       if (pokemonEvolution == null) {
         throw '';
       }
@@ -242,7 +242,7 @@ class PokemonInfoPage extends ConsumerWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        PokemonInfoPage(pokemon: pokemonEvolution),
+                        PokemonInfoPage(pokemonName: pokemonEvolution.name,),
                     transitionDuration: const Duration(
                         seconds:
                             1), // Set transition duration to 0 for no animation

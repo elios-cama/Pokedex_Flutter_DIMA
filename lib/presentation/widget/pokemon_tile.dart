@@ -17,12 +17,12 @@ class PokemonTile extends ConsumerWidget {
     final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
     return GestureDetector(
       onTap: () {
-        final specificPokemon = pokemonNotifier.getPokemon(pokemon.id);
+        final specificPokemon = pokemonNotifier.getPokemonById(pokemon.id);
         if (specificPokemon != null) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PokemonInfoPage(pokemon: specificPokemon),
+              builder: (context) => PokemonInfoPage(pokemonName: specificPokemon.name),
             ),
           );
         }
