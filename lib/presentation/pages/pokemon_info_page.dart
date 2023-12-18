@@ -28,7 +28,7 @@ class PokemonInfoPage extends ConsumerWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => PokemonInfoPage(
-                    pokemonName: pokemonName,
+                    pokemonName: nextPokemon.name,
                   ),
                 ),
               );
@@ -41,7 +41,7 @@ class PokemonInfoPage extends ConsumerWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => PokemonInfoPage(
-                         pokemonName: pokemonName,
+                         pokemonName: nextPokemon.name,
                         )),
               );
             }
