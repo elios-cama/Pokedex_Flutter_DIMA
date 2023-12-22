@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pokedex/presentation/pages/pokemon_info_page.dart';
 import 'package:pokedex/presentation/widget/pokemon_grid.dart';
 
 import '../application/pokemon_services.dart';
@@ -16,6 +18,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class HomePageState extends ConsumerState<HomePage> {
   CameraController? _cameraController;
+  final _textRecognizer = TextRecognizer();
 
   @override
   void initState() {
@@ -32,9 +35,37 @@ class HomePageState extends ConsumerState<HomePage> {
     }
   }
 
+  Future<String> _scanImage(WidgetRef ref) async {
+    try {
+      final image = await _cameraController!.takePicture();
+      final inputImage = InputImage.fromFilePath(image.path);
+      final recognisedText = await _textRecognizer.processImage(inputImage);
+      final text = recognisedText.text;
+      return text;
+     /* Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PokemonInfoPage(pokemonName: pokemonName),
+        ),
+      );*/
+        } catch (e) {
+      print(e);
+      return "Ivysaur";
+    }
+  }
+  String getSecondElement(String scannedText) {
+    List<String> lines = scannedText.split('\n');
+    if (lines.length >= 2) {
+      return lines[1];
+    } else {
+      throw Exception('Scanned text does not contain enough lines');
+    }
+  }
+
   @override
   void dispose() {
     _cameraController?.dispose();
+    _textRecognizer.close();
     super.dispose();
   }
 
@@ -156,7 +187,22 @@ class HomePageState extends ConsumerState<HomePage> {
                       height: 300,
                       child: _cameraController != null &&
                               _cameraController!.value.isInitialized
-                          ? CameraPreview(_cameraController!)
+                          ? Stack(
+                              children: [
+                                CameraPreview(_cameraController!),
+                                ElevatedButton(
+                                    onPressed: () async{
+                                      String text = await _scanImage(ref);
+                                      text = getSecondElement(text);
+                                      final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
+                                      final pokemonNames = pokemonNotifier.getPokemonNames();
+                                      final pokemonName =
+                                      pokemonNames.firstWhere((name) => text.contains(name));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonInfoPage(pokemonName: pokemonName),),);
+                                    },
+                                    child: const Text("Scan")),
+                              ],
+                            )
                           : const Center(child: CircularProgressIndicator()),
                     ),
                   );
