@@ -5,7 +5,9 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pokedex/presentation/pages/pokemon_info_page.dart';
 import 'package:pokedex/presentation/widget/pokemon_grid.dart';
+import 'package:pokedex/presentation/widget/pokemon_filter.dart';
 
+import '../application/pokemon_filter_provider.dart';
 import '../application/pokemon_services.dart';
 import '../application/search_delegate.dart';
 
@@ -19,6 +21,7 @@ class HomePage extends ConsumerStatefulWidget {
 class HomePageState extends ConsumerState<HomePage> {
   CameraController? _cameraController;
   final _textRecognizer = TextRecognizer();
+  List<String> _currentPokemonList = [];
 
   @override
   void initState() {
@@ -72,7 +75,8 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final pokemonNotifier = ref.watch(pokemonNotifierProvider.notifier);
-    final pokemonNames = pokemonNotifier.getPokemonNames();
+    final List<String> pokemonNames = pokemonNotifier.getPokemonNames();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F0),
       appBar: AppBar(
@@ -144,12 +148,29 @@ class HomePageState extends ConsumerState<HomePage> {
                         Icons.filter_alt,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                              ),
+                              builder: (BuildContext context) {
+                                return FilterPokemonWidget();
+                              }
+                            );
+                        },
                     ),
                   ),
                 )
               ],
             ),
+          ),
+          const SizedBox(
+            height: 10,
           ),
           const Expanded(
             child: PokemonGrid(),

@@ -51,6 +51,14 @@ class PokemonNotifier extends StateNotifier<PokemonState> {
       return [];
     }
   }
+  List<Pokemon> getPokemons() {
+    try {
+      final pokemonNames = state.pokemons.toList();
+      return pokemonNames;
+    } catch (e) {
+      return [];
+    }
+  }
 }
 
 final pokemonNotifierProvider =

@@ -5,6 +5,7 @@ import 'package:pokedex/presentation/widget/type_box.dart';
 
 import '../../application/pokemon_services.dart';
 import '../home_page.dart';
+import '../widget/pokemon_favourites.dart';
 
 class PokemonInfoPage extends ConsumerWidget {
   const PokemonInfoPage({super.key, required this.pokemonName});
@@ -15,13 +16,14 @@ class PokemonInfoPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
     final pokemon = pokemonNotifier.getPokemonByName(pokemonName);
+    bool isFavourite = Favourites().isFavourites(pokemon!.id);
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragUpdate: (DragUpdateDetails details) {
           try {
-            if (details.delta.dx > 0.1) {
-              var nextPokemon =
-                  pokemonNotifier.getPokemonById(_getPrevPokemonID(pokemon!.id));
+            if (details.delta.dx > 8) {
+              var nextPokemon = pokemonNotifier
+                  .getPokemonById(_getPrevPokemonID(pokemon!.id));
               if (nextPokemon == null) {
                 throw '';
               }
@@ -32,7 +34,7 @@ class PokemonInfoPage extends ConsumerWidget {
                   ),
                 ),
               );
-            } else if (details.delta.dx < -0.1) {
+            } else if (details.delta.dx < -8) {
               var nextPokemon =
                   pokemonNotifier.getPokemonById(_getNextPokemonID(pokemon.id));
               if (nextPokemon == null) {
@@ -41,8 +43,9 @@ class PokemonInfoPage extends ConsumerWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => PokemonInfoPage(
-                         pokemonName: nextPokemon.name,
-                        )),
+                      pokemonName: nextPokemon.name,
+                    )
+                ),
               );
             }
           } catch (e) {}
@@ -82,6 +85,13 @@ class PokemonInfoPage extends ConsumerWidget {
                           );
                         },
                       ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 40.0),
+                      child: FavouriteIcon(pokemonName: pokemon.name,),
                     ),
                   ),
                 ],
@@ -201,12 +211,17 @@ class PokemonInfoPage extends ConsumerWidget {
                     const SizedBox(
                       height: 18.0,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: getEvolutionImages(
-                        pokemon,
-                        context,
-                        pokemonNotifier,
+                    Center(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: getEvolutionImages(
+                            pokemon,
+                            context,
+                            pokemonNotifier,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -242,7 +257,9 @@ class PokemonInfoPage extends ConsumerWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        PokemonInfoPage(pokemonName: pokemonEvolution.name,),
+                        PokemonInfoPage(
+                      pokemonName: pokemonEvolution.name,
+                    ),
                     transitionDuration: const Duration(
                         seconds:
                             1), // Set transition duration to 0 for no animation

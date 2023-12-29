@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex/presentation/widget/pokemon_tile.dart';
 
+import '../../application/pokemon_filter_provider.dart';
 import '../../application/pokemon_services.dart';
 
 class PokemonGrid extends ConsumerWidget {
@@ -11,6 +12,8 @@ class PokemonGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pokemonState = ref.watch(pokemonNotifierProvider);
     final pokemons = pokemonState.pokemons;
+
+    // provider for filter... Doesn't work
 
     if (pokemonState.error != null) {
       return const Center(

@@ -5,14 +5,12 @@ class Type {
   final Color color;
   final Color backgroundColor;
 
-  Type(
-      {required this.name, required this.color, required this.backgroundColor});
+  Type({required this.name, required this.color, required this.backgroundColor});
 
   factory Type.fromJson(String typeName) {
     Color typeColor = _getColorForType(typeName);
     Color backgroundTypeColor = _getBackgroundColorForType(typeName);
-    return Type(
-        name: typeName, color: typeColor, backgroundColor: backgroundTypeColor);
+    return Type(name: typeName, color: typeColor, backgroundColor: backgroundTypeColor);
   }
 
   Map<String, dynamic> toJson() {
@@ -21,6 +19,10 @@ class Type {
       'color': color.value,
       'backgroundColor': backgroundColor.value,
     };
+  }
+
+  Type getTypeFromJson(String typeName) {
+    return Type.fromJson(typeName);
   }
 
 

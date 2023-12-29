@@ -36,8 +36,7 @@ class PokemonTile extends ConsumerWidget {
           ),
           borderOnForeground: true,
           child: Padding(
-            padding: const EdgeInsets.all(
-                8.0), // Padding around the column// Card border behind...?
+            padding: const EdgeInsets.all(8.0), // Padding around the column// Card border behind...?
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
