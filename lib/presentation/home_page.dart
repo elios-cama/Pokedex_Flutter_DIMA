@@ -46,24 +46,9 @@ class HomePageState extends ConsumerState<HomePage> {
       final recognisedText = await _textRecognizer.processImage(inputImage);
       final text = recognisedText.text;
       return text;
-      /* Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PokemonInfoPage(pokemonName: pokemonName),
-        ),
-      );*/
     } catch (e) {
       print(e);
       return "Ivysaur";
-    }
-  }
-
-  String getSecondElement(String scannedText) {
-    List<String> lines = scannedText.split('\n');
-    if (lines.length >= 2) {
-      return lines[1];
-    } else {
-      throw Exception('Scanned text does not contain enough lines');
     }
   }
 
@@ -276,28 +261,33 @@ class HomePageState extends ConsumerState<HomePage> {
                       child: _cameraController != null &&
                               _cameraController!.value.isInitialized
                           ? Stack(
+                              alignment: Alignment.bottomCenter,
                               children: [
                                 CameraPreview(_cameraController!),
                                 ElevatedButton(
-                                    onPressed: () async {
-                                      String text = await _scanImage(ref);
-                                      text = getSecondElement(text);
-                                      final pokemonNotifier = ref.read(
-                                          pokemonNotifierProvider.notifier);
-                                      final pokemonNames =
-                                          pokemonNotifier.getPokemonNames();
-                                      final pokemonName =
-                                          pokemonNames.firstWhere(
-                                              (name) => text.contains(name));
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PokemonInfoPage(
-                                              pokemonName: pokemonName),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text("Scan")),
+                                  onPressed: () async {
+                                    String text = await _scanImage(ref);
+                                    final pokemonNotifier = ref
+                                        .read(pokemonNotifierProvider.notifier);
+                                    final pokemonNames =
+                                        pokemonNotifier.getPokemonNames();
+                                    final pokemonName = pokemonNames.firstWhere(
+                                        (name) => text.contains(name));
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PokemonInfoPage(
+                                            pokemonName: pokemonName),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Scan",
+                                    style: TextStyle(
+                                      color: Color(0xFFC8614E),
+                                    ),
+                                  ),
+                                ),
                               ],
                             )
                           : const Center(child: CircularProgressIndicator()),
