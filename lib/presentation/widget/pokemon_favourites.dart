@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:pokedex/presentation/widget/pokemon_filter.dart';
 
@@ -58,4 +59,4 @@ class Favourites {
   void removeFromFavourites(String item) { favouritePokemons.remove(item); }
 
   bool isFavourites(String item) { return favouritePokemons.contains(item); }
-}
+}*/

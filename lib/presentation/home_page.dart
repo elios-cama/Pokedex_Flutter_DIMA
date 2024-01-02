@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pokedex/presentation/pages/pokemon_info_page.dart';
-import 'package:pokedex/presentation/widget/pokemon_grid.dart';
 import 'package:pokedex/presentation/widget/pokemon_filter.dart';
+import 'package:pokedex/presentation/widget/pokemon_grid.dart';
+import 'package:pokedex/presentation/widget/type_box.dart';
 
 import '../application/pokemon_filter_provider.dart';
 import '../application/pokemon_services.dart';
 import '../application/search_delegate.dart';
+import '../data/constants/allTypes.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -21,7 +23,6 @@ class HomePage extends ConsumerStatefulWidget {
 class HomePageState extends ConsumerState<HomePage> {
   CameraController? _cameraController;
   final _textRecognizer = TextRecognizer();
-  List<String> _currentPokemonList = [];
 
   @override
   void initState() {
@@ -45,17 +46,18 @@ class HomePageState extends ConsumerState<HomePage> {
       final recognisedText = await _textRecognizer.processImage(inputImage);
       final text = recognisedText.text;
       return text;
-     /* Navigator.push(
+      /* Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PokemonInfoPage(pokemonName: pokemonName),
         ),
       );*/
-        } catch (e) {
+    } catch (e) {
       print(e);
       return "Ivysaur";
     }
   }
+
   String getSecondElement(String scannedText) {
     List<String> lines = scannedText.split('\n');
     if (lines.length >= 2) {
@@ -76,6 +78,7 @@ class HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final pokemonNotifier = ref.watch(pokemonNotifierProvider.notifier);
     final List<String> pokemonNames = pokemonNotifier.getPokemonNames();
+    final pokemonFilter = ref.watch(pokemonFilterProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF0F0F0),
@@ -149,20 +152,37 @@ class HomePageState extends ConsumerState<HomePage> {
                         color: Colors.white,
                       ),
                       onPressed: () async {
-                            showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                ),
-                              ),
-                              builder: (BuildContext context) {
-                                return FilterPokemonWidget();
-                              }
-                            );
-                        },
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return GridView.count(
+                                crossAxisCount: 3,
+                                children: allPokemonTypes.map((type) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      final currentFilter = ref
+                                          .read(pokemonFilterProvider.notifier)
+                                          .state;
+                                      final filter =
+                                          currentFilter.type == type.name
+                                              ? PokemonFilter(type: null)
+                                              : PokemonFilter(type: type.name);
+                                      ref
+                                          .read(pokemonFilterProvider.notifier)
+                                          .state = filter;
+                                      pokemonNotifier.filterPokemons(filter);
+                                    },
+                                    child: Stack(
+                                      alignment: Alignment.centerRight,
+                                      children: [
+                                        typeBox(type),
+                                      ],
+                                    ),
+                                  );
+                                }).toList());
+                          },
+                        );
+                      },
                     ),
                   ),
                 )
@@ -212,14 +232,23 @@ class HomePageState extends ConsumerState<HomePage> {
                               children: [
                                 CameraPreview(_cameraController!),
                                 ElevatedButton(
-                                    onPressed: () async{
+                                    onPressed: () async {
                                       String text = await _scanImage(ref);
                                       text = getSecondElement(text);
-                                      final pokemonNotifier = ref.read(pokemonNotifierProvider.notifier);
-                                      final pokemonNames = pokemonNotifier.getPokemonNames();
+                                      final pokemonNotifier = ref.read(
+                                          pokemonNotifierProvider.notifier);
+                                      final pokemonNames =
+                                          pokemonNotifier.getPokemonNames();
                                       final pokemonName =
-                                      pokemonNames.firstWhere((name) => text.contains(name));
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonInfoPage(pokemonName: pokemonName),),);
+                                          pokemonNames.firstWhere(
+                                              (name) => text.contains(name));
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PokemonInfoPage(
+                                              pokemonName: pokemonName),
+                                        ),
+                                      );
                                     },
                                     child: const Text("Scan")),
                               ],

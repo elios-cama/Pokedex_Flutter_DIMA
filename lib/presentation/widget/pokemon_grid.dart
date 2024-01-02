@@ -11,7 +11,7 @@ class PokemonGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pokemonState = ref.watch(pokemonNotifierProvider);
-    final pokemons = pokemonState.pokemons;
+    final pokemons = pokemonState.filteredPokemons;
 
     // provider for filter... Doesn't work
 
