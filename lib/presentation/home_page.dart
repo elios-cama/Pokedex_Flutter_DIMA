@@ -155,31 +155,78 @@ class HomePageState extends ConsumerState<HomePage> {
                         showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
-                            return GridView.count(
-                                crossAxisCount: 3,
-                                children: allPokemonTypes.map((type) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      final currentFilter = ref
-                                          .read(pokemonFilterProvider.notifier)
-                                          .state;
-                                      final filter =
-                                          currentFilter.type == type.name
-                                              ? PokemonFilter(type: null)
-                                              : PokemonFilter(type: type.name);
-                                      ref
-                                          .read(pokemonFilterProvider.notifier)
-                                          .state = filter;
-                                      pokemonNotifier.filterPokemons(filter);
-                                    },
-                                    child: Stack(
-                                      alignment: Alignment.centerRight,
-                                      children: [
-                                        typeBox(type),
-                                      ],
+                            return StatefulBuilder(builder:
+                                (BuildContext context, StateSetter setState) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    const Text(
+                                      'Select Pokemon Type',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  );
-                                }).toList());
+                                    Expanded(
+                                      child: GridView.count(
+                                          crossAxisCount: 5,
+                                          crossAxisSpacing: 8.0,
+                                          mainAxisSpacing: 8.0,
+                                          children: allPokemonTypes.map((type) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                final currentFilter = ref
+                                                    .read(pokemonFilterProvider
+                                                        .notifier)
+                                                    .state;
+                                                final filter = currentFilter
+                                                            .type ==
+                                                        type.name
+                                                    ? PokemonFilter(type: null)
+                                                    : PokemonFilter(
+                                                        type: type.name);
+                                                ref
+                                                    .read(pokemonFilterProvider
+                                                        .notifier)
+                                                    .state = filter;
+                                                pokemonNotifier
+                                                    .filterPokemons(filter);
+                                                setState(() {});
+                                              },
+                                              child: Stack(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                      border: Border.all(
+                                                        color: ref
+                                                                    .read(pokemonFilterProvider
+                                                                        .notifier)
+                                                                    .state
+                                                                    .type ==
+                                                                type.name
+                                                            ? Colors.black
+                                                            : Colors
+                                                                .transparent,
+                                                        width: 1.0,
+                                                      ),
+                                                    ),
+                                                    child: typeBox(type),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList()),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            });
                           },
                         );
                       },
