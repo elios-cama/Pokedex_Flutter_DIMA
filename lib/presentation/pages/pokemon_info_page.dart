@@ -87,13 +87,13 @@ class PokemonInfoPage extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  /*Align(
+                  Align(
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 40.0),
                       child: FavouriteIcon(pokemonName: pokemon.name,),
                     ),
-                  ),*/
+                  ),
                 ],
               ),
               const SizedBox(height: 18.0), // padding

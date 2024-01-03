@@ -161,22 +161,12 @@ class HomePageState extends ConsumerState<HomePage> {
                                           children: allPokemonTypes.map((type) {
                                             return GestureDetector(
                                               onTap: () {
-                                                final currentFilter = ref
-                                                    .read(pokemonFilterProvider
-                                                        .notifier)
-                                                    .state;
-                                                final filter = currentFilter
-                                                            .type ==
-                                                        type.name
+                                                final currentFilter = ref.read(pokemonFilterProvider.notifier).state;
+                                                final filter = currentFilter.type == type.name
                                                     ? PokemonFilter(type: null)
-                                                    : PokemonFilter(
-                                                        type: type.name);
-                                                ref
-                                                    .read(pokemonFilterProvider
-                                                        .notifier)
-                                                    .state = filter;
-                                                pokemonNotifier
-                                                    .filterPokemons(filter);
+                                                    : PokemonFilter(type: type.name);
+                                                ref.read(pokemonFilterProvider.notifier).state = filter;
+                                                pokemonNotifier.filterPokemons(filter);
                                                 setState(() {});
                                               },
                                               child: Stack(

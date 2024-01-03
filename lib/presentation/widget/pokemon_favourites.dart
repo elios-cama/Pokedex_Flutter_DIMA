@@ -1,6 +1,5 @@
-/*
 import 'package:flutter/material.dart';
-import 'package:pokedex/presentation/widget/pokemon_filter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FavouriteIcon extends StatefulWidget {
   final String pokemonName;
@@ -12,34 +11,48 @@ class FavouriteIcon extends StatefulWidget {
 
 class _FavouriteIconState extends State<FavouriteIcon> {
   late bool isFavourite;
+  late Future<List<String>> favouritePokemons;
+  final Favourites favPokemons = Favourites();
 
   @override
   void initState() {
     super.initState();
-    isFavourite = Favourites().isFavourites(widget.pokemonName);
+    favouritePokemons = favPokemons.loadFavourites();
   }
 
-  void toggleFavourite() {
+  void toggleFavourite(List<String> currentFavourites) {
     setState(() {
-      isFavourite = !isFavourite;
+      isFavourite = currentFavourites.contains(widget.pokemonName);
       if (isFavourite) {
-        Favourites().addToFavourites(widget.pokemonName);
-        PokemonFiltered().favouritesPokemons.add(widget.pokemonName);
+        currentFavourites.remove(widget.pokemonName);
       } else {
-        Favourites().removeFromFavourites(widget.pokemonName);
-        PokemonFiltered().favouritesPokemons.remove(widget.pokemonName);
+        currentFavourites.add(widget.pokemonName);
       }
+      favPokemons.saveFavourites(currentFavourites);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        isFavourite ? Icons.star : Icons.star_border,
-        color: isFavourite ? Colors.yellow : null,
-      ),
-      onPressed: toggleFavourite,
+    return FutureBuilder<List<String>>(
+      future: favouritePokemons,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return const Text('Error loading data');
+        } else {
+          List<String> currentFavourites = snapshot.data ?? [];
+          isFavourite = currentFavourites.contains(widget.pokemonName);
+          return IconButton(
+            icon: Icon(
+              isFavourite ? Icons.star : Icons.star_border,
+              color: isFavourite ? Colors.yellow : null,
+            ),
+            onPressed: () => toggleFavourite(currentFavourites),
+          );
+        }
+      },
     );
   }
 }
@@ -47,16 +60,17 @@ class _FavouriteIconState extends State<FavouriteIcon> {
 
 
 class Favourites {
-  Favourites._();
-  static final Favourites _instance = Favourites._();
-  factory Favourites() { return _instance; }
+  Favourites();
 
-  final List<String> favouritePokemons = [];
-  List<String> get favouriteItems => favouritePokemons;
+  Future<void> saveFavourites(List<String> favourites) async {
+    final prefs = await SharedPreferences.getInstance();
+    final serializedList = favourites.join(';');
+    await prefs.setString('favouritePokemonList', serializedList);
+  }
 
-  void addToFavourites(String item) { favouritePokemons.add(item); }
-
-  void removeFromFavourites(String item) { favouritePokemons.remove(item); }
-
-  bool isFavourites(String item) { return favouritePokemons.contains(item); }
-}*/
+  Future<List<String>> loadFavourites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final serializedList = prefs.getString('favouritePokemonList') ?? '';
+    return serializedList.split(';');
+  }
+}
